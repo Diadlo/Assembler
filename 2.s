@@ -10,6 +10,7 @@ ZERO:
 .text
 .globl _start
 
+# long get_size();
 GET_SIZE:
     mov     $0, %rax   # read
     mov     $0, %rdi   # stdin
@@ -22,15 +23,22 @@ GET_SIZE:
     subw    ZERO, %ax  # Преобразуем символ в число
     ret
 
+# void get_array(char* pointer, int count)
 GET_ARRAY:
+    mov     %rsp, %rbp
+    mov     8(%rbp), %rdx
+    mov     16(%rbp), %rsi
     push    %rax
     mov     $0, %rax   # read
     mov     $0, %rdi   # stdin
     syscall
     pop     %rax
-    ret
+    ret 
 
+# void check_array(char* pointer)
 CHECK_ARRAY:
+    mov     %rsp, %rbp
+    mov     8(%rbp), %rbx
     xor     %rcx, %rcx
     movb    (%rbx), %cl
 .START:
@@ -63,14 +71,18 @@ CHECK_ARRAY:
 _start:
     call    GET_SIZE           # rax = GET_SIZE
 
-    lea     (, %eax, 4), %rbx  # rbx = eax * 4
-    sub     %rbx, %rsp
-    mov     %rsp, %rsi         # Указатель, куда считываять
-    lea     (, %rax, 2), %rdx  # Сколько байт считывать
-    call    GET_ARRAY
+    lea     (, %eax, 4), %rbx  # pointer = rbx = eax * 4
+    sub     %rbx, %rsp         # Выделяем память на стеке
+    pushq   %rsp
 
-    mov     %rsp, %rbx         # Указатель на массив
+    lea     (, %rax, 2), %rbx  # Сколько байт считывать | count = rbx = rax * 2
+    pushq   %rbx
+
+    call    GET_ARRAY
+    add     $8, %rsp     # Убираем count, оставляем указатель
+
     call    CHECK_ARRAY
+    add     $8, %rsp     # Убираемя указатель
 
     mov     $60, %rax    # exit
     xor     %rdi, %rdi   # Код возврата 0
