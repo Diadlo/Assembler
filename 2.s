@@ -1,10 +1,10 @@
 .data
 NO:
 	.string	"Not found"
-    .set NO_LEN, . - NO
+  .set NO_LEN, . - NO
 YES:
 	.string	"Found"
-    .set YES_LEN, . - YES 
+  .set YES_LEN, . - YES
 ZERO:
     .ascii "0"
 .text
@@ -35,10 +35,11 @@ GET_ARRAY:
     pop     %rax
     ret 
 
-# void check_array(char* pointer)
+# void check_array(char* pointer, int size)
 CHECK_ARRAY:
     mov     %rsp, %rbp
-    mov     8(%rbp), %rbx
+    mov     8(%rbp), %rax
+    mov     16(%rbp), %rbx
     xor     %rcx, %rcx
     movb    (%rbx), %cl
 .START:
@@ -77,13 +78,13 @@ _start:
 
     lea     (, %rax, 2), %rbx  # Сколько байт считывать | count = rbx = rax * 2
     pushq   %rbx
-
     call    GET_ARRAY
+
     add     $8, %rsp     # Убираем count, оставляем указатель
-
+    pushq   %rax
     call    CHECK_ARRAY
-    add     $8, %rsp     # Убираемя указатель
 
+    add     $8, %rsp     # Убираемя указатель
     mov     $60, %rax    # exit
     xor     %rdi, %rdi   # Код возврата 0
     syscall

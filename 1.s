@@ -1,10 +1,10 @@
-.rodata
+.data
 NO:
 	.string	"Not found"
-    .set NO_LEN, . - NO
+  .set NO_LEN, . - NO
 YES:
 	.string	"Found"
-    .set YES_LEN, . - YES
+  .set YES_LEN, . - YES
 SIZE: 
     .long 4
 ARRAY: 
