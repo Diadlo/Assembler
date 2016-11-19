@@ -1,0 +1,5 @@
+#!/usr/bin/rarun2
+
+program=./a.out
+stdin=input.txt
+stdout=output.txt
